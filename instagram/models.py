@@ -81,6 +81,9 @@ class Media(ApiModel):
         for version, version_info in six.iteritems(entry['images']):
             new_media.images[version] = Image.object_from_dictionary(version_info)
 
+        if 'null.jpg' in new_media.images['thumbnail']:
+            new_media.type = 'gallery'
+
         if new_media.type == 'video':
             new_media.videos = {}
             for version, version_info in six.iteritems(entry['videos']):
@@ -96,7 +99,7 @@ class Media(ApiModel):
 
         new_media.comment_count = entry['comments']['count']
         new_media.comments = []
-        if 'data' in  entry['comments']:
+        if 'data' in entry['comments']:
             for comment in entry['comments']['data']:
                 new_media.comments.append(Comment.object_from_dictionary(comment))
 
@@ -113,7 +116,7 @@ class Media(ApiModel):
         new_media.caption = None
         if entry['caption']:
             new_media.caption = Comment.object_from_dictionary(entry['caption'])
-        
+
         new_media.tags = []
         if entry['tags']:
             for tag in entry['tags']:
