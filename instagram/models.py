@@ -81,7 +81,7 @@ class Media(ApiModel):
         for version, version_info in six.iteritems(entry['images']):
             new_media.images[version] = Image.object_from_dictionary(version_info)
 
-        if 'null.jpg' in new_media.images['thumbnail']:
+        if '/null.jpg' in new_media.images['thumbnail'].url:
             new_media.type = 'album'
 
         if new_media.type == 'video':
