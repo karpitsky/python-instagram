@@ -82,7 +82,7 @@ class Media(ApiModel):
             new_media.images[version] = Image.object_from_dictionary(version_info)
 
         if 'null.jpg' in new_media.images['thumbnail']:
-            new_media.type = 'gallery'
+            new_media.type = 'album'
 
         if new_media.type == 'video':
             new_media.videos = {}
