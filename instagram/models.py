@@ -84,6 +84,9 @@ class Media(ApiModel):
         if '/null.jpg' in new_media.images['thumbnail'].url:
             new_media.type = 'album'
 
+        if new_media.type == 'video' and 'videos' not in entry:
+            new_media.type = 'album'
+
         if new_media.type == 'video':
             new_media.videos = {}
             for version, version_info in six.iteritems(entry['videos']):
