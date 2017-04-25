@@ -82,10 +82,10 @@ class Media(ApiModel):
             new_media.images[version] = Image.object_from_dictionary(version_info)
 
         if '/null.jpg' in new_media.images['thumbnail'].url:
-            new_media.type = 'album'
+            new_media.type = 'carousel'
 
         if new_media.type == 'video' and 'videos' not in entry:
-            new_media.type = 'album'
+            new_media.type = 'carousel'
 
         if new_media.type == 'video':
             new_media.videos = {}
