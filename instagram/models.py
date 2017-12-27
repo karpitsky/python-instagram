@@ -62,8 +62,7 @@ class Video(Image):
 class Media(ApiModel):
     __slots__ = (
         'id', 'type', 'user', 'images', 'videos', 'user_has_liked', 'like_count', 'likes', 'comment_count',
-        'comments', 'users_in_photo', 'created_time', 'location', 'caption', 'tags', 'link', 'filter',
-        'get_standard_resolution_url', 'get_low_resolution_url', 'get_thumbnail_url', 'object_from_dictionary'
+        'comments', 'users_in_photo', 'created_time', 'location', 'caption', 'tags', 'link', 'filter'
     )
 
     def __init__(self, id=None, **kwargs):
