@@ -27,6 +27,7 @@ class ApiModel(object):
 
 
 class Image(ApiModel):
+    __slots__ = ('url', 'height', 'width')
 
     def __init__(self, url, width, height, **kwargs):
         self.url = url
@@ -44,6 +45,10 @@ class Video(Image):
 
 
 class Media(ApiModel):
+    __slots__ = (
+        'id', 'type', 'user', 'images', 'videos', 'user_has_liked', 'like_count', 'likes', 'comment_count',
+        'comments', 'users_in_photo', 'created_time', 'location', 'caption', 'tags', 'link', 'filter'
+    )
 
     def __init__(self, id=None, **kwargs):
         self.id = id
@@ -62,10 +67,8 @@ class Media(ApiModel):
         else:
             return self.videos['low_resolution'].url
 
-
     def get_thumbnail_url(self):
         return self.images['thumbnail'].url
-
 
     def __unicode__(self):
         return "Media: %s" % self.id
@@ -168,6 +171,8 @@ class Comment(ApiModel):
 
 
 class Point(ApiModel):
+    __slots__ = ('latitude', 'longitude')
+
     def __init__(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
@@ -198,6 +203,7 @@ class Location(ApiModel):
 
 
 class User(ApiModel):
+    __slots__ = ('bio', 'id', 'counts', 'full_name', 'is_business', 'profile_picture', 'username', 'website')
 
     def __init__(self, id, *args, **kwargs):
         self.id = id
@@ -209,6 +215,7 @@ class User(ApiModel):
 
 
 class Relationship(ApiModel):
+    __slots__ = ('incoming_status', 'outgoing_status', 'target_user_is_private')
 
     def __init__(self, incoming_status="none", outgoing_status="none", target_user_is_private=False):
         self.incoming_status = incoming_status
@@ -223,6 +230,8 @@ class Relationship(ApiModel):
 
 
 class Position(ApiModel):
+    __slots__ = ('x', 'y')
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -237,6 +246,8 @@ class Position(ApiModel):
 
 
 class UserInPhoto(ApiModel):
+    __slots__ = ('position', 'user')
+
     def __init__(self, user, position):
         self.position = position
         self.user = user

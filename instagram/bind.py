@@ -65,6 +65,7 @@ def bind_method(**config):
             self.return_json = kwargs.pop("return_json", False)
             self.max_pages = kwargs.pop("max_pages", 3)
             self.with_next_url = kwargs.pop("with_next_url", None)
+            self.include_signed_request = kwargs.pop("include_signed_request", False)
             self.parameters = {}
             self._build_parameters(args, kwargs)
             self._build_path()
@@ -86,7 +87,7 @@ def bind_method(**config):
                 if key in self.parameters:
                     raise InstagramClientError("Parameter %s already supplied" % key)
                 self.parameters[key] = encode_string(value)
-            if 'user_id' in self.accepts_parameters and not 'user_id' in self.parameters \
+            if 'user_id' in self.accepts_parameters and 'user_id' not in self.parameters \
                and not self.requires_target_user:
                 self.parameters['user_id'] = 'self'
 
@@ -113,10 +114,10 @@ def bind_method(**config):
             if self.pagination_format == 'dict':
                 return pagination
             raise Exception('Invalid value for pagination_format: %s' % self.pagination_format)
-          
+
         def _do_api_request(self, url, method="GET", body=None, headers=None):
             headers = headers or {}
-            if self.signature and self.api.client_ips != None and self.api.client_secret != None:
+            if self.signature and self.api.client_ips is not None and self.api.client_secret is not None:
                 secret = self.api.client_secret
                 ips = self.api.client_ips
                 signature = hmac.new(secret, ips, sha256).hexdigest()
@@ -177,10 +178,13 @@ def bind_method(**config):
             return content, next
 
         def execute(self):
-            url, method, body, headers = OAuth2Request(self.api).prepare_request(self.method,
-                                                                                 self.path,
-                                                                                 self.parameters,
-                                                                                 include_secret=self.include_secret)
+            url, method, body, headers = OAuth2Request(self.api).prepare_request(
+                self.method,
+                self.path,
+                self.parameters,
+                include_secret=self.include_secret,
+                include_signed_request=self.include_signed_request
+            )
             if self.with_next_url:
                 return self._get_with_next_url(self.with_next_url, method, body, headers)
             if self.as_generator:
