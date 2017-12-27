@@ -2,7 +2,22 @@ from .helper import timestamp_to_datetime
 import six
 
 
-class ApiModel(object):
+class SlotPickleMixin(object):
+    def __getstate__(self):
+        if not self.__slots__:
+            raise Exception('`__slots__` is required')
+        return dict(
+            (slot, getattr(self, slot))
+            for slot in self.__slots__
+            if hasattr(self, slot)
+        )
+
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            setattr(self, slot, value)
+
+
+class ApiModel(SlotPickleMixin):
 
     @classmethod
     def object_from_dictionary(cls, entry):
@@ -47,7 +62,8 @@ class Video(Image):
 class Media(ApiModel):
     __slots__ = (
         'id', 'type', 'user', 'images', 'videos', 'user_has_liked', 'like_count', 'likes', 'comment_count',
-        'comments', 'users_in_photo', 'created_time', 'location', 'caption', 'tags', 'link', 'filter'
+        'comments', 'users_in_photo', 'created_time', 'location', 'caption', 'tags', 'link', 'filter',
+        'get_standard_resolution_url', 'get_low_resolution_url', 'get_thumbnail_url', 'object_from_dictionary'
     )
 
     def __init__(self, id=None, **kwargs):
@@ -136,6 +152,7 @@ class Media(ApiModel):
 
 
 class MediaShortcode(Media):
+    __slots__ = ('shortcode')
 
     def __init__(self, shortcode=None, **kwargs):
         self.shortcode = shortcode
@@ -144,6 +161,8 @@ class MediaShortcode(Media):
 
 
 class Tag(ApiModel):
+    __slots__ = ('media_count', 'name')
+
     def __init__(self, name, **kwargs):
         self.name = name
         for key, value in six.iteritems(kwargs):
@@ -154,6 +173,8 @@ class Tag(ApiModel):
 
 
 class Comment(ApiModel):
+    __slots__ = ('created_at', 'id', 'text', 'user')
+
     def __init__(self, *args, **kwargs):
         for key, value in six.iteritems(kwargs):
             setattr(self, key, value)
@@ -182,6 +203,8 @@ class Point(ApiModel):
 
 
 class Location(ApiModel):
+    __slots__ = ('id', 'point', 'name')
+
     def __init__(self, id, *args, **kwargs):
         self.id = str(id)
         for key, value in six.iteritems(kwargs):
