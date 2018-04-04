@@ -144,7 +144,9 @@ class Media(ApiModel):
 
         new_media.caption = None
         if entry['caption']:
-            new_media.caption = Comment.object_from_dictionary(entry['caption'])
+            caption_object = entry['caption']
+            caption_object['from'] = user_object
+            new_media.caption = Comment.object_from_dictionary(caption_object)
 
         new_media.tags = []
         if entry['tags']:
