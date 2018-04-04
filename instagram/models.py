@@ -93,7 +93,15 @@ class Media(ApiModel):
         new_media = Media(id=entry['id'])
         new_media.type = entry['type']
 
-        new_media.user = User.object_from_dictionary(entry['user'])
+        user_object = entry['user']
+        try:
+            user_id = entry['id'].split('_')[1]
+        except IndexError:
+            user_id = None
+        user_object.update({
+            'id': user_id
+        })
+        new_media.user = User.object_from_dictionary(user_object)
 
         new_media.images = {}
         for version, version_info in six.iteritems(entry['images']):
